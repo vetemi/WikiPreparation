@@ -22,28 +22,24 @@ public class Processor {
 	}
 
 	public void proccess() {
-		System.out.println("---- Start reading ----");
+		System.out.println("---- Start reading/wirting ----");
 
 		String content;
+		String name;
 		Set<String> featuredNames;
 		for (File f : filewriter.getFilesInputArray()) {
-			content = "";
 			content = getContentFromFile(f, 1);
+			name = f.getName().replace(".txt", "");
 
 			content = textprocessor.prepareContent(content);
-			featuredNames = textprocessor.featureName(f.getName());
-			putInWikimap(f.getName(), content);
+			featuredNames = textprocessor.featureName(name);
+			filewriter.writeContentInFile(name, content);
 
-			for (String name : featuredNames) {
-				if(!name.equals(f.getName())) {
-					putInWikimap(name, content);
+			for (String featuredName : featuredNames) {
+				if(!featuredName.equals(name)) {
+					filewriter.writeContentInFile(featuredName, content);
 				}
 			}
-		}
-		System.out.println("--- Start writing ---");
-		for (Map.Entry<String, String> entry : wikiMap.entrySet())
-		{
-			filewriter.writeContentInFile(entry.getKey(), entry.getValue());
 		}
 		filewriter.close();
 		System.out.println("--- END OF PROCESS ---");
